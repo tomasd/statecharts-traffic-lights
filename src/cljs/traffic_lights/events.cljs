@@ -5,14 +5,16 @@
     [statecharts.core :as sc]
     [statecharts.path :as path]))
 
-
+;; Statechart can be defined globally and then put into re-frame, see ::initialize-db
+;;
+;; This statechart consists of 2 top level states, each has several internal state machines
 (def statechart
-  {:type   :xor
-   :init   :working
+  {:type   :xor                                             ;; XOR - only 1 substate is active at a time
+   :init   :working                                         ;; initialize to :working state uppon re-frame initialization
    :states {:working {:type        :xor
                       :init        :red
-                      :enter       [(scr/ctx-assoc-db-in [:current-mode] :working)
-                                    (scr/ctx-assoc-db-in [:lights] {:red    false
+                      :enter       [(scr/ctx-assoc-db-in [:current-mode] :working) ;; set current mode into db
+                                    (scr/ctx-assoc-db-in [:lights] {:red    false ;; reset traffic lights
                                                                     :yellow false
                                                                     :green  false})]
                       :states      {:red        {:enter       [(scr/ctx-assoc-db-in [:lights] {:red true})
@@ -62,10 +64,13 @@
                       :transitions [{:event  :toggle
                                      :target (path/sibling :working)}]}}})
 
+;; Initialize db and statecharts
 (re-frame/reg-event-fx
   ::initialize-db
   (fn [_ _]
     (-> {:db {}}
+        ;; DB needs to be initialized with statecharts model, statecharts needs to be "compiled", aka cache layer
+        ;; for internal states is created
         (scr/initialize (sc/make statechart)))))
 
 ;; Subscriptions

@@ -1,6 +1,14 @@
 # traffic-lights
 
-A [re-frame](https://github.com/Day8/re-frame) application designed to ... well, that part is up to you.
+A [re-frame](https://github.com/Day8/re-frame) application designed to show simple example of using statecharts.
+
+Traffic lights works in 2 modes:
+- idle (yellow light is blinking)
+- working (red/yellow/green changes according to mode)
+
+Use can toggle between idle and working by pressing button. Internal statemachine uses timers to transition between modes.
+
+![Statechart for traffic lights](statechart.png)
 
 ## Development Mode
 
